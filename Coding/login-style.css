@@ -19,6 +19,16 @@ body {
   background-color: #ecf0f1;
 }
 
+a {
+  text-decoration: none;
+  color: var(--light-green);
+}
+
+a:hover {
+  color: var(--deep-green);
+  text-decoration: underline;
+}
+
 .container-login {
   width: 60vw;
   height: 60vh;
@@ -118,13 +128,14 @@ form button {
   transition: color, text-shadow .5s;
   color: white;
   transition: .5s;
+  margin-bottom: -10px;
 }
 
 form button:hover {
   background-color: var(--deep-green);
 }
 
-span {
+form span {
   position: absolute;
   font-weight: bold;
   font-size: .9em;
@@ -142,6 +153,12 @@ span {
 }
 
 /*fim*/
+
+.help_links {
+  display: flex;
+  flex-direction: column;
+  gap: .5em;
+}
 
 #logo {
   width: 400px;
