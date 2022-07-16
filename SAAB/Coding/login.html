@@ -11,17 +11,31 @@
 <body>
   <main>
     <div class="container-login">
+
       <div id="side-side">
+
       <div class="logo-side">
         <img src="img/SAAB-logo2.0.png" alt="Logo do saab. Uma bola com um apito na parte de dentro e circulada por uma seta" id="logo">
         <h1>SAAB</h1>
       </div>
 
       <div class="login-side">
+
         <form action="#">
         <h3>LOGIN</h3>
-        <input type="email" id="email" required placeholder="Email">
-        <input type="password" id="password" required placeholder="Senha">
+
+        <label class="login_label">
+          <span>Email</span>
+          <input type="email" id="email" class="input" required>
+        </label>
+        
+
+        <label for="password">
+          <span>Senha</span>
+          <input type="password" id="password" class="input" required>
+        </label>
+        
+
         <button id = "submit-button">Entrar</button>
         </form>
 
@@ -35,4 +49,5 @@
     </div>
   </main>
 </body>
+<script src="js/script.js"></script>
 </html>
