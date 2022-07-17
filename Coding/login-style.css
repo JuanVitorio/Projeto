@@ -115,13 +115,14 @@ input:focus::placeholder {
   transition: .2s;
 }
 
-form button {
+form input[type=submit] {
   width: 200px;
   height: 50px;
+  padding: 0px;
   margin: auto;
   border: none;
   cursor: pointer;
-  font-size: 1.4em;
+  font-size: 1.3em;
   font-weight: normal;
   border-radius: 5px;
   background-color: var(--light-green);
@@ -131,14 +132,14 @@ form button {
   margin-bottom: -10px;
 }
 
-form button:hover {
+form input[type=submit]:hover {
   background-color: var(--deep-green);
 }
 
 form span {
   position: absolute;
-  font-weight: bold;
-  font-size: .9em;
+  font-weight: normal;
+  font-size: 1em;
   text-transform: lowercase;
   margin: 15px;
   margin-bottom: 10px;
