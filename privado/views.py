@@ -265,13 +265,9 @@ def cbf(request, arb):
 def sorteio(request):
     arbt = Arbitro.objects.all()
     #guarda todos os objetos arbitros do banco 
-    pontos = 0
-    #guarda a pontuação de um arbitro
     resultado = []
     #guardar a pontuação de cada arbitro
     aux = -1 
-    #axilia o array resultados a guardar a pontuação de cada arbitro
-    #servira como paramito de lugar par ao array resultado [aux]
     aux2 = 0 
     #auilia no for de cmparação dos resultados 
     ganhador = ' '
@@ -281,6 +277,8 @@ def sorteio(request):
     #ate agora, esse for ira apenas fazer o apanhado de abitros apitos conforme as regras
     #da cbf e não das estabelecidas por nos. 
     for i in arbt:
+        pontos = 0
+        #guarda a pontuação de um arbitro
         #todos os conflitos que envolvem o arbitro i 
         Conflitos = Conflito.objects.filter(arbitro = i).count()
         #todos as declarações polemicas que envolvem o arbitro i 
@@ -299,628 +297,56 @@ def sorteio(request):
         #se sim, somasse os pontos com o peso do if que no momento é 1. indo para os proximos ifs quem contem as outras regras
         #e mesmo sendo não, ele ira se deparar com o else mais embaixo que fara ele passar pelos outros ifs
         #e assim sucessivamente. Por isso o codigo ficou tão extenso 
-        if (i.formafisica == True):
+        if (i.formafisica == False):
             pontos = pontos+1
-            if(ContDe > 0):
-                pontos = pontos + (ContDe*2)
-                if (ContDenun > 0):
-                    pontos = pontos + (ContDenun*3)
-                    if (ContVp > 0):
-                        pontos = pontos + (ContVp*4)
-                        if (ContDoc > 0):
-                            pontos = pontos + (ContVp*5)
-                            if (Conflitos > 0):
-                                pontos = pontos + (ContVp*6)
-                                #apos ter passado por todos os ifs o aux ira icar somandosse sempre 1
-                                #por exemplo, inicialmente ele é = -1 e no primeiro i ele passa a ser = 0
-                                aux = aux +1
-                                aux2 = aux
-                                #fiz isso para que nesse momento do codigo o array comece na posição 0 e va se incrementando com os pontos de cada arbitro em posições diferentes do array
-                                resultado [aux] = pontos
-                                #esse for servira para comparar os pontos de i com os dos outros que ja se passaram
-                                #no caso se aux for = 0 o for não ira funcionar ja que não tem outro arbitro para comparar
-                                for a in range(aux):
-                                    #aqui entra o aux2 que eu defini como sendo o mesmo valor de aux 
-                                    #na segunda volta do for, que é quando ele ira funcionar
-                                    #aux ira ser = 1 e aux2 tambem 
-                                    #dessa forma, nesse if ele ira fazer a comparação de qual dos pontos é menor, o da posição 1 ou 0 
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        #se for o da posição 1, i ira ser o ganhador por enquanto 
-                                        ganhador = i 
-                                        #no caso de ter outras voltas essa operação é importante para que os pontos de i seja comparado com os outros e assim o for não ficar comparando empre as mesmas posições
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        #se eles tiverem com os mesmo pontos a variavel ganhador passar a ser um array
-                                        #PONTO A SER QUESTIONADO--------acho que pode ser isso que ta dando errado, de eu mudar o tipo da variavel. mas tipo se fosse a sintaxe mesmo que estivesse errada tava dando erro na tela de sorteio mas não aparece nenhum erro ------
-                                        ganhador =[]
-                                        #esse sera o array de ganhadores que estara na posição aux que na proxima rodada do for se incrementarar com +1
-                                        ganhador[aux] = i
-                                        return ganhador
-                            #o restante do codigo é so uma enterna repetição do  que eu ja comentei 
-                            else:
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                        else:
-                            if (Conflitos > 0):
-                                pontos = pontos + (ContVp*6)
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                            else:
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                    else:
-                        if (ContDoc > 0):
-                            pontos = pontos + (ContVp*5)
-                            if (Conflitos > 0):
-                                pontos = pontos + (ContVp*6)
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                            else:
-                                aux = aux +1
-                                resultado [aux] = pontos
-                                aux2 = aux
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                        else:
-                            if (Conflitos > 0):
-                                pontos = pontos + (ContVp*6)
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                            else:
-                                aux = aux +1
-                                aux2 = aux
-                                resultado.append(pontos)
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                else:
-                    if (ContVp > 0):
-                        pontos = pontos + (ContVp*4)
-                        if (ContDoc > 0):
-                            pontos = pontos + (ContVp*5)
-                            if (Conflitos > 0):
-                                pontos = pontos + (ContVp*6)
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                            else:
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                        else:
-                            if (Conflitos > 0):
-                                pontos = pontos + (ContVp*6)
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                            else:
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                    else:
-                        if (ContDoc > 0):
-                            pontos = pontos + (ContVp*5)
-                            if (Conflitos > 0):
-                                pontos = pontos + (ContVp*6)
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                            else:
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                        else:
-                            if (Conflitos > 0):
-                                pontos = pontos + (ContVp*6)
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                            else:
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-            else:
-                if (ContDenun >0):
-                    pontos = pontos + (ContDenun*3)
-                    if (ContVp > 0):
-                        pontos = pontos + (ContVp*4)
-                        if (ContDoc > 0):
-                            pontos = pontos + (ContVp*5)
-                            if (Conflitos > 0):
-                                pontos = pontos + (ContVp*6)
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                            else:
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                        else:
-                            if (Conflitos > 0):
-                                pontos = pontos + (ContVp*6)
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                            else:
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                    else:
-                        if (ContDoc > 0):
-                            pontos = pontos + (ContVp*5)
-                            if (Conflitos > 0):
-                                pontos = pontos + (ContVp*6)
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                            else:
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                        else:
-                            if (Conflitos > 0):
-                                pontos = pontos + (ContVp*6)
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                            else:
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-        else:
-            if(ContDe > 0):
-                pontos = pontos + (ContDe*2)
-                if (ContDenun >0):
-                    pontos = pontos + (ContDenun*3)
-                    if (ContVp > 0):
-                        pontos = pontos + (ContVp*4)
-                        if (ContDoc > 0):
-                            pontos = pontos + (ContVp*5)
-                            if (Conflitos > 0):
-                                pontos = pontos + (ContVp*6)
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                            else:
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                        else:
-                            if (Conflitos > 0):
-                                pontos = pontos + (ContVp*6)
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                            else:
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                    else:
-                        if (ContDoc > 0):
-                            pontos = pontos + (ContVp*5)
-                            if (Conflitos > 0):
-                                pontos = pontos + (ContVp*6)
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                            else:
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                        else:
-                            if (Conflitos > 0):
-                                pontos = pontos + (ContVp*6)
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                            else:
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                else:
-                    if (ContVp > 0):
-                        pontos = pontos + (ContVp*4)
-                        if (ContDoc > 0):
-                            pontos = pontos + (ContVp*5)
-                            if (Conflitos > 0):
-                                pontos = pontos + (ContVp*6)
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                            else:
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                        else:
-                            if (Conflitos > 0):
-                                pontos = pontos + (ContVp*6)
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                            else:
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                    else:
-                        if (ContDoc > 0):
-                            pontos = pontos + (ContVp*5)
-                            if (Conflitos > 0):
-                                pontos = pontos + (ContVp*6)
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                            else:
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                        else:
-                            if (Conflitos > 0):
-                                pontos = pontos + (ContVp*6)
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
-                            else:
-                                aux = aux +1
-                                aux2 = aux
-                                resultado [aux] = pontos
-                                for a in range(aux):
-                                    if (resultado[aux] < resultado[aux2-1]):
-                                        ganhador = i 
-                                        aux2 = aux2 -1
-                                        return ganhador
-                                    elif (resultado[aux] == resultado[aux2-1]):
-                                        ganhador =[]
-                                        ganhador[aux] = i
-                                        return ganhador
- 
+            
+        if(ContDe > 0):
+            pontos = pontos + (ContDe*2)
+        
+        if (ContDenun > 0):
+            pontos = pontos + (ContDenun*3)
+
+        if (ContVp > 0):
+            pontos = pontos + (ContVp*4)
+        
+        if (ContDoc > 0):
+            pontos = pontos + (ContVp*5)
+        
+        if (Conflitos > 0):
+            pontos = pontos + (ContVp*6)
+        
+        #apos ter passado por todos os ifs o aux ira icar somandosse sempre 1
+        #por exemplo, inicialmente ele é = -1 e no primeiro i ele passa a ser = 0
+        aux = aux +1
+        aux2 = aux
+
+        resultado.append(pontos)
+        #esse for servira para comparar os pontos de i com os dos outros que ja se passaram
+        #no caso se aux = 0 o for não ira funcionar ja que não tem outro arbitro para comparar
+        for a in range(aux):
+        #aqui entra o aux2 que eu defini como sendo o mesmo valor de aux 
+        #na segunda volta do for, que é quando ele ira funcionar
+        #aux ira ser = 1 e aux2 tambem 
+        #dessa forma, nesse if ele ira fazer a comparação de qual dos pontos é menor, o da posição 1 ou 0 
+            if (resultado[aux] < resultado[aux2-1]):
+                #se for o da posição 1, i ira ser o ganhador por enquanto 
+                ganhador = i.codigo 
+                #no caso de ter outras voltas essa operação é importante para que os pontos de i seja comparado com os outros e assim o for não ficar comparando empre as mesmas posições
+                aux2 = aux2 -1
+                return ganhador
+            #elif (resultado[aux] == resultado[aux2-1]):
+                #se eles tiverem com os mesmo pontos a variavel ganhador passar a ser um array
+                #PONTO A SER QUESTIONADO--------acho que pode ser isso que ta dando errado, de eu mudar o tipo da variavel. mas tipo se fosse a sintaxe mesmo que estivesse errada tava dando erro na tela de sorteio mas não aparece nenhum erro ------
+            #    ganhador= []
+            #    #esse sera o array de ganhadores que estara na posição aux que na proxima rodada do for se incrementarar com +1
+            #    ganhador.append(i.codigo)
+            #    return ganhado
+    arbganhador = Arbitro.objects.filter(codigo = ganhador)
     formPartida = PartidaForm(request.POST or None)
     if formPartida.is_valid():
         formPartida.save()
         return redirect("")
-    pacote = {"formPartida": formPartida, "arbitros": arbt, "ganhador": ganhador}
+    pacote = {"formPartida": formPartida, "arbitros": arbt, "ganhador": arbganhador}
     return render(request, "SAAB/sorteio.html", pacote)
 
 
