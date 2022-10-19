@@ -270,7 +270,7 @@ def sorteio(request):
     aux = -1 
     aux2 = 0 
     #auilia no for de cmparação dos resultados 
-    ganhador = ' '
+    ganhador = 0
     #String que armazena o arbitro sorteado
 
     #o FOR ira passar por todos os arbitros pela variavel 'arbt' 
@@ -333,7 +333,6 @@ def sorteio(request):
                 ganhador = i.codigo 
                 #no caso de ter outras voltas essa operação é importante para que os pontos de i seja comparado com os outros e assim o for não ficar comparando empre as mesmas posições
                 aux2 = aux2 -1
-                return ganhador
             #elif (resultado[aux] == resultado[aux2-1]):
                 #se eles tiverem com os mesmo pontos a variavel ganhador passar a ser um array
                 #PONTO A SER QUESTIONADO--------acho que pode ser isso que ta dando errado, de eu mudar o tipo da variavel. mas tipo se fosse a sintaxe mesmo que estivesse errada tava dando erro na tela de sorteio mas não aparece nenhum erro ------
@@ -341,11 +340,11 @@ def sorteio(request):
             #    #esse sera o array de ganhadores que estara na posição aux que na proxima rodada do for se incrementarar com +1
             #    ganhador.append(i.codigo)
             #    return ganhado
-    arbganhador = Arbitro.objects.filter(codigo = ganhador)
+    arbganhador = Arbitro.objects.get(codigo = ganhador)
     formPartida = PartidaForm(request.POST or None)
     if formPartida.is_valid():
         formPartida.save()
-        return redirect("")
+        return redirect("/")
     pacote = {"formPartida": formPartida, "arbitros": arbt, "ganhador": arbganhador}
     return render(request, "SAAB/sorteio.html", pacote)
 
