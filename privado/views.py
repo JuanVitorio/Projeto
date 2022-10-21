@@ -346,29 +346,36 @@ def sorteio(request):
         #         aux2 = aux2 - 1
     
     
-    print(lista_notas_juizes)
     lista_notas_juizes_ordenada = sorted(lista_notas_juizes, key=lambda tup: tup[1])
     
     tupla_primeiro_juiz = lista_notas_juizes_ordenada[0] 
     menor_nota = tupla_primeiro_juiz[1]
     resultado_final = []
-    print(resultado_final)
+
     for juiz_tupla in lista_notas_juizes_ordenada:
         if juiz_tupla[1] == menor_nota:
             resultado_final.append(juiz_tupla[0])
     if request.method == "POST":
         if formPartida.is_valid():
-            #for i in resultado_final
+            visitante = formPartida.cleaned_data.get("visitante")
+            cidvisitante = Time.objects.filter(nome=visitante).values('cidade')
+            print(cidvisitante)
+            local = formPartida.cleaned_data.get("local")
+            cidlocal = Time.objects.filter(nome=local).values('cidade')
+            print(cidlocal)
+            for i in resultado_final:
+                print(Arbitro.cidade)
+                if (Arbitro.cidade != cidvisitante) and (Arbitro.cidade != cidlocal):
+                    obj = Partida.objects.create(
+                    usuario = Usuario.objects.get(codigo = 1),
+                    arbitro = Arbitro.objects.get(codigo = i.codigo),
+                    visitante = formPartida.cleaned_data.get("visitante"),
+                    local = formPartida.cleaned_data.get("local"),
+                    data = formPartida.cleaned_data.get("data"),
+                )
+                obj.save()
+                return redirect("/")
 
-            obj = Partida.objects.create(
-                usuario = Usuario.objects.get(codigo = 1),
-                arbitro = Arbitro.objects.get(codigo = resultado_final[0].codigo),
-                visitante = formPartida.cleaned_data.get("visitante"),
-                local = formPartida.cleaned_data.get("local"),
-                data = formPartida.cleaned_data.get("data"),
-            )
-            obj.save()
-            return redirect("/")
     print(resultado_final)
     pacote = {"FormPartida": formPartida, "ganhador": resultado_final}
     return render(request, "SAAB/sorteio.html", pacote)
