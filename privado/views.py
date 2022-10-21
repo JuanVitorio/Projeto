@@ -270,7 +270,7 @@ def sorteio(request):
     aux = -1 
     aux2 = 0 
     #auilia no for de cmparação dos resultados 
-    ganhador = 0
+    ganhador = []
     #String que armazena o arbitro sorteado
 
     #o FOR ira passar por todos os arbitros pela variavel 'arbt' 
@@ -317,36 +317,39 @@ def sorteio(request):
         
         #apos ter passado por todos os ifs o aux ira icar somandosse sempre 1
         #por exemplo, inicialmente ele é = -1 e no primeiro i ele passa a ser = 0
-        aux = aux +1
-        aux2 = aux
+        #aux = aux +1
+        #aux2 = aux
 
-        resultado.append(pontos)
+        #resultado.append(pontos)
+        #resultado.sort()
+
+        #if (pontos == resultado[0]):
+        #    ganhador.append(i)
+        
         #esse for servira para comparar os pontos de i com os dos outros que ja se passaram
         #no caso se aux = 0 o for não ira funcionar ja que não tem outro arbitro para comparar
-        for a in range(aux):
+        #for a in range(aux):
         #aqui entra o aux2 que eu defini como sendo o mesmo valor de aux 
         #na segunda volta do for, que é quando ele ira funcionar
         #aux ira ser = 1 e aux2 tambem 
         #dessa forma, nesse if ele ira fazer a comparação de qual dos pontos é menor, o da posição 1 ou 0 
-            if (resultado[aux] < resultado[aux2-1]):
+        #    if (resultado[aux] < resultado[aux2-1]):
                 #se for o da posição 1, i ira ser o ganhador por enquanto 
-                ganhador = i.codigo 
+        #        ganhador.append(i)
                 #no caso de ter outras voltas essa operação é importante para que os pontos de i seja comparado com os outros e assim o for não ficar comparando empre as mesmas posições
-                aux2 = aux2 -1
-                arbganhador = Arbitro.objects.get(codigo = ganhador)
-            elif (resultado[aux] == resultado[aux2-1]):
+        #        aux2 = aux2 -1
+        #    elif (resultado[aux] == resultado[aux2-1]):
                 #se eles tiverem com os mesmo pontos a variavel ganhador passar a ser um array
                 #PONTO A SER QUESTIONADO--------acho que pode ser isso que ta dando errado, de eu mudar o tipo da variavel. mas tipo se fosse a sintaxe mesmo que estivesse errada tava dando erro na tela de sorteio mas não aparece nenhum erro ------
-                ganhador = []
                 #esse sera o array de ganhadores que estara na posição aux que na proxima rodada do for se incrementarar com +1
-                ganhador.append(i.codigo)
+        #        ganhador.append(i)
     
     
     formPartida = PartidaForm(request.POST or None)
     if formPartida.is_valid():
         formPartida.save()
         return redirect("/")
-    pacote = {"formPartida": formPartida, "arbitros": arbt, "ganhador": arbganhador}
+    pacote = {"formPartida": formPartida, "arbitros": arbt, "ganhador": ganhador}
     return render(request, "SAAB/sorteio.html", pacote)
 
 
