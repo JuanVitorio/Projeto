@@ -357,24 +357,42 @@ def sorteio(request):
             resultado_final.append(juiz_tupla[0])
     if request.method == "POST":
         if formPartida.is_valid():
-            visitante = formPartida.cleaned_data.get("visitante")
-            cidvisitante = Time.objects.filter(nome=visitante).values('cidade')
-            print(cidvisitante)
-            local = formPartida.cleaned_data.get("local")
-            cidlocal = Time.objects.filter(nome=local).values('cidade')
-            print(cidlocal)
-            for i in resultado_final:
-                print(Arbitro.cidade)
-                if (Arbitro.cidade != cidvisitante) and (Arbitro.cidade != cidlocal):
-                    obj = Partida.objects.create(
-                    usuario = Usuario.objects.get(codigo = 1),
-                    arbitro = Arbitro.objects.get(codigo = i.codigo),
-                    visitante = formPartida.cleaned_data.get("visitante"),
-                    local = formPartida.cleaned_data.get("local"),
-                    data = formPartida.cleaned_data.get("data"),
+            obj_visitante = formPartida.cleaned_data.get("visitante")
+            cid_visitante = obj_visitante.cidade
+            Part_visitante_visitante = Partida.objects.filter(visitante = obj_visitante)
+            Part_visitante_local = Partida.objects.filter(local = obj_visitante)
+            #codigo_visitante = obj_visitante.codigo
+
+            #conf_visitante = Conflito.objects.filter(time=codigo_visitante)
+            print(Part_visitante_visitante)
+            print(Part_visitante_local)
+
+
+            obj_local = formPartida.cleaned_data.get("local")
+            cid_local = obj_local.cidade
+            #cid_visitante = Cidade.objects.filter(nome = visitante.cidade)
+
+            #local = formPartida.cleaned_data.get("local")
+            #cid_local = Time.objects.filter(nome=local).select_related('cidade')
+            #print(cid_local)
+            if(len(resultado_final) > 1):
+                for i in resultado_final:
+                    cid_arb = i.cidade
+                    Part_arb = Partida.objects.filter(arbitro = i)
+                    #cid_arb = Cidade.objects.filter(nome = i.cidade)
+                    print(Part_arb)   
+                    if (cid_arb != cid_visitante) and (cid_arb != cid_local):
+                        if(Part_arb = Part_visitante_visitante) || (Part_arb = Part_visitante_local):
+                            print("ok")
+            obj = Partida.objects.create(
+                usuario = Usuario.objects.get(codigo = 1),
+                arbitro = Arbitro.objects.get(codigo = 1),
+                visitante = formPartida.cleaned_data.get("visitante"),
+                local = formPartida.cleaned_data.get("local"),
+                data = formPartida.cleaned_data.get("data"),
                 )
-                obj.save()
-                return redirect("/")
+            obj.save()
+            return redirect("/")       
 
     print(resultado_final)
     pacote = {"FormPartida": formPartida, "ganhador": resultado_final}
