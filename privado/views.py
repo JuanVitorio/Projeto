@@ -1,7 +1,10 @@
+from itertools import chain
+import random
 from django.shortcuts import render, redirect
 from privado.models import Time, Conflito, Arbitro, Usuario, Cidade, VidapubliArbitro, DeclaracaoArbitro, DenunciaArbitro, DocumentoArbitro, Partida
 from privado.form import *
 from django.db.models.aggregates import Count
+from django.db.models import Max
 
 def login(request):
     return render(request, "SAAB/login.html")
@@ -355,38 +358,56 @@ def sorteio(request):
     for juiz_tupla in lista_notas_juizes_ordenada:
         if juiz_tupla[1] == menor_nota:
             resultado_final.append(juiz_tupla[0])
+
     if request.method == "POST":
         if formPartida.is_valid():
             obj_visitante = formPartida.cleaned_data.get("visitante")
             cid_visitante = obj_visitante.cidade
-            Part_visitante_visitante = Partida.objects.filter(visitante = obj_visitante)
-            Part_visitante_local = Partida.objects.filter(local = obj_visitante)
-            #codigo_visitante = obj_visitante.codigo
+            list_arbitros = []
+            arbitro_ganhador =' '
 
-            #conf_visitante = Conflito.objects.filter(time=codigo_visitante)
-            print(Part_visitante_visitante)
-            print(Part_visitante_local)
-
+            Part_visitante_visitante = Partida.objects.filter(visitante = obj_visitante).order_by('-data').first()
+            Part_visitante_local = Partida.objects.filter(local = obj_visitante).order_by('-data').first()
+            Conflito_visitante = Conflito.objects.filter(time = obj_visitante).order_by('-partida').first()           
+            if (Conflito_visitante == None):
+                arb_Part_conflito_visitante = ' '
+            else: 
+                cod_Part_conflito_visitante = Conflito_visitante.partida
+                arb_Part_conflito_visitante = cod_Part_conflito_visitante.arbitro
 
             obj_local = formPartida.cleaned_data.get("local")
             cid_local = obj_local.cidade
-            #cid_visitante = Cidade.objects.filter(nome = visitante.cidade)
 
-            #local = formPartida.cleaned_data.get("local")
-            #cid_local = Time.objects.filter(nome=local).select_related('cidade')
-            #print(cid_local)
+            Part_local_visitante = Partida.objects.filter(visitante = obj_local).order_by('-data').first()
+            Part_local_local = Partida.objects.filter(local = obj_local).order_by('-data').first()
+            Conflito_local = Conflito.objects.filter(time = obj_local).order_by('-partida').first()
+            if (Conflito_local == None):
+                arb_Part_conflito_local = ' '
+            else: 
+                cod_Part_conflito_local = Conflito_local.partida
+                arb_Part_conflito_local = cod_Part_conflito_local.arbitro
+            #Part_conflito_local = Partida.objects.filter(codigo = cod_Part_conflito_local)
+            #arb_Part_conflito_local = Part_conflito_local.arbitro
+
+            #print(Part_conflito_local)
             if(len(resultado_final) > 1):
                 for i in resultado_final:
-                    cid_arb = i.cidade
-                    Part_arb = Partida.objects.filter(arbitro = i)
-                    #cid_arb = Cidade.objects.filter(nome = i.cidade)
-                    print(Part_arb)   
+                    Part_arb = Partida.objects.filter(arbitro = i).order_by('-data').first()
+                    cid_arb = Cidade.objects.filter(nome = i.cidade)
+                    codarb = i.codigo
                     if (cid_arb != cid_visitante) and (cid_arb != cid_local):
-                        if(Part_arb = Part_visitante_visitante) || (Part_arb = Part_visitante_local):
-                            print("ok")
+                        if(Part_arb != Part_visitante_visitante) and (Part_arb != Part_visitante_local) and (Part_arb != Part_local_visitante) and (Part_arb != Part_local_local):
+                            if(i != arb_Part_conflito_visitante) and (i != arb_Part_conflito_local):
+                                print(i)
+                                list_arbitros.append(i) 
+            else: 
+                arbitro_ganhador = resultado_final[0].codigo
+            if(len(list_arbitros) > 1):
+                arbitro_ganhador = random.choice(list_arbitros)
+
             obj = Partida.objects.create(
                 usuario = Usuario.objects.get(codigo = 1),
-                arbitro = Arbitro.objects.get(codigo = 1),
+                arbitro = Arbitro.objects.get(codigo = arbitro_ganhador.codigo),
                 visitante = formPartida.cleaned_data.get("visitante"),
                 local = formPartida.cleaned_data.get("local"),
                 data = formPartida.cleaned_data.get("data"),
