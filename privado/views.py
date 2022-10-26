@@ -350,9 +350,12 @@ def sorteio(request):
                                 list_arbitros.append(i)  
                 if (len(resultado_final) == 1):
                     arbitro_ganhador = resultado_final[0]
-            
                 if(len(list_arbitros) > 1):
                     arbitro_ganhador = random.choice(list_arbitros)
+                if(len(list_arbitros) == 1):
+                    arbitro_ganhador = list_arbitros[0]
+                if(len(list_arbitros) == 0):
+                    arbitro_ganhador = random.choice(resultado_final)
 
                 obj = Partida.objects.create(
                     usuario = Usuario.objects.get(codigo = 1),
