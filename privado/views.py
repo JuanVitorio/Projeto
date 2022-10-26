@@ -267,40 +267,18 @@ def sorteio(request):
     formPartida = PartidaForm(request.POST, request.FILES)
     pacote = {}
     arbt = Arbitro.objects.all()
-    #guarda todos os objetos arbitros do banco 
     resultado = []
-    #guardar a pontuação de cada arbitro
-    aux = -1 
-    aux2 = 0 
-    #auilia no for de cmparação dos resultados 
     ganhador = []
     ganhador.append(0)
-    #String que armazena o arbitro sorteado
-
-    #o FOR ira passar por todos os arbitros pela variavel 'arbt' 
-    #ate agora, esse for ira apenas fazer o apanhado de abitros apitos conforme as regras
-    #da cbf e não das estabelecidas por nos. 
     lista_notas_juizes = []
     for i in arbt:
-        print(arbt)
         pontos = 0
-        #guarda a pontuação de um arbitro
-        #todos as declarações polemicas que envolvem o arbitro i 
-        ContDe= DeclaracaoArbitro.objects.filter(arbitro = i).count()
-        #todos as denuncias que envolvem o arbitro i 
-        ContDenun= DenunciaArbitro.objects.filter(arbitro = i).count()
-        #todos os acontecimentos polemicos da vida publica que envolvem o arbitro i 
-        ContVp= VidapubliArbitro.objects.filter(arbitro = i).count()
-        #todos os registros de documentos mal feitos ou incompletos que envolvem o arbitro i 
-        ContDoc= DocumentoArbitro.objects.filter(arbitro = i).count()
-        
-        #apartir daqui tera uma sequencia de ifs e elses para que o arbitro i possa passar por todos os ifs
-        #mesmo que no anterior ele não tenha passado
 
-        #regra de uma boa forma fisica
-        #se sim, somasse os pontos com o peso do if que no momento é 1. indo para os proximos ifs quem contem as outras regras
-        #e mesmo sendo não, ele ira se deparar com o else mais embaixo que fara ele passar pelos outros ifs
-        #e assim sucessivamente. Por isso o codigo ficou tão extenso 
+        ContDe= DeclaracaoArbitro.objects.filter(arbitro = i).count()
+        ContDenun= DenunciaArbitro.objects.filter(arbitro = i).count()
+        ContVp= VidapubliArbitro.objects.filter(arbitro = i).count()
+        ContDoc= DocumentoArbitro.objects.filter(arbitro = i).count()
+
         if (i.formafisica == False):
             pontos = pontos+1
             
@@ -316,38 +294,9 @@ def sorteio(request):
         if (ContDoc > 0):
             pontos = pontos + (ContDoc*5)
         
-        #apos ter passado por todos os ifs o aux ira icar somandosse sempre 1
-        #por exemplo, inicialmente ele é = -1 e no primeiro i ele passa a ser = 0
-        aux = aux +1
-        aux2 = aux
 
         tupla_juiz_nota= (i, pontos)
         lista_notas_juizes.append(tupla_juiz_nota)
-        # resultado.append(pontos)
-        # resultado.sort()
-
-        # #if (pontos == resultado[0]):
-        # #    ganhador.append(i)
-        
-        # #esse for servira para comparar os pontos de i com os dos outros que ja se passaram
-        # #no caso se aux = 0 o for não ira funcionar ja que não tem outro arbitro para comparar
-        # for a in range(aux):
-        # #aqui entra o aux2 que eu defini como sendo o mesmo valor de aux 
-        # #na segunda volta do for, que é quando ele ira funcionar
-        # #aux ira ser = 1 e aux2 tambem 
-        # #dessa forma, nesse if ele ira fazer a comparação de qual dos pontos é menor, o da posição 1 ou 0 
-        #     if (resultado[aux] < resultado[aux2-1]):
-        #         #se for o da posição 1, i ira ser o ganhador por enquanto 
-        #         ganhador[0] = i
-        #         #no caso de ter outras voltas essa operação é importante para que os pontos de i seja comparado com os outros e assim o for não ficar comparando empre as mesmas posições
-        #         aux2 = aux2 - 1
-        #     elif (resultado[aux] == resultado[aux2-1]):
-        #         #se eles tiverem com os mesmo pontos a variavel ganhador passar a ser um array
-        #         #PONTO A SER QUESTIONADO--------acho que pode ser isso que ta dando errado, de eu mudar o tipo da variavel. mas tipo se fosse a sintaxe mesmo que estivesse errada tava dando erro na tela de sorteio mas não aparece nenhum erro ------
-        #         #esse sera o array de ganhadores que estara na posição aux que na proxima rodada do for se incrementarar com +1
-        #         ganhador.append(i)
-        #         aux2 = aux2 - 1
-    
     
     lista_notas_juizes_ordenada = sorted(lista_notas_juizes, key=lambda tup: tup[1])
     if(len(lista_notas_juizes_ordenada) == 0):
@@ -364,10 +313,11 @@ def sorteio(request):
     if request.method == "POST":
         if formPartida.is_valid():
             if(len(resultado_final) != 0):
-                obj_visitante = formPartida.cleaned_data.get("visitante")
-                cid_visitante = obj_visitante.cidade
                 list_arbitros = []
                 arbitro_ganhador =' '
+
+                obj_visitante = formPartida.cleaned_data.get("visitante")
+                cid_visitante = obj_visitante.cidade
 
                 Part_visitante_visitante = Partida.objects.filter(visitante = obj_visitante).order_by('-data').first()
                 Part_visitante_local = Partida.objects.filter(local = obj_visitante).order_by('-data').first()
@@ -389,10 +339,6 @@ def sorteio(request):
                 else: 
                     cod_Part_conflito_local = Conflito_local.partida
                     arb_Part_conflito_local = cod_Part_conflito_local.arbitro
-                #Part_conflito_local = Partida.objects.filter(codigo = cod_Part_conflito_local)
-                #arb_Part_conflito_local = Part_conflito_local.arbitro
-
-                #print(Part_conflito_local)
 
                 for i in resultado_final:
                     Part_arb = Partida.objects.filter(arbitro = i).order_by('-data').first()
